@@ -226,32 +226,69 @@
     }
     explode() {
       const p = this.palette;
-      const count = 90 + ((Math.random() * 60) | 0);
       const power = rand(3.4, 6.2);
-      const type = Math.random();
+      
+      // 50% 的概率爆炸成心形
+      const isHeart = Math.random() < 0.5; 
 
       flashes.push({ x: this.x, y: this.y, life: 1, r: 8, color: p[1] });
 
-      for (let i = 0; i < count; i++) {
-        const ang = (Math.PI * 2 * i) / count + rand(-0.06, 0.06);
-        let sp = power * rand(0.35, 1);
-        // 环形 / 球形 / 心形变化
-        if (type > 0.72) sp = power * (0.85 + Math.random() * 0.15);
+      if (isHeart) {
+        // --- 心形爆炸 ---
+        const count = 120; // 心形需要多一点粒子才饱满
+        const scale = power * 0.16; // 控制心形的大小
 
-        particles.push({
-          x: this.x,
-          y: this.y,
-          vx: Math.cos(ang) * sp,
-          vy: Math.sin(ang) * sp,
-          life: 1,
-          decay: rand(0.008, 0.018),
-          size: rand(1.2, 2.9),
-          color: p[(Math.random() * p.length) | 0],
-          twinkle: Math.random() < 0.35,
-          spark: Math.random() < 0.18
-        });
+        for (let i = 0; i < count; i++) {
+          // 心形参数方程：t 在 0 到 2π 之间
+          const t = (Math.PI * 2 * i) / count;
+          
+          // 数学公式生成心形坐标
+          const hx = 16 * Math.pow(Math.sin(t), 3);
+          const hy = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
+          
+          // 加入轻微的随机扰动，让烟花看起来更真实自然
+          const noiseX = rand(-0.4, 0.4);
+          const noiseY = rand(-0.4, 0.4);
+
+          particles.push({
+            x: this.x,
+            y: this.y,
+            vx: (hx + noiseX) * scale,
+            vy: (hy + noiseY) * scale,
+            life: 1,
+            decay: rand(0.008, 0.015), // 稍微延长一点心形的存活时间
+            size: rand(1.5, 3), // 稍微大一点
+            color: p[(Math.random() * p.length) | 0],
+            twinkle: Math.random() < 0.35,
+            spark: Math.random() < 0.2
+          });
+        }
+      } else {
+        // --- 原有的球形/环形爆炸 ---
+        const count = 90 + ((Math.random() * 60) | 0);
+        const type = Math.random();
+
+        for (let i = 0; i < count; i++) {
+          const ang = (Math.PI * 2 * i) / count + rand(-0.06, 0.06);
+          let sp = power * rand(0.35, 1);
+          if (type > 0.72) sp = power * (0.85 + Math.random() * 0.15);
+
+          particles.push({
+            x: this.x,
+            y: this.y,
+            vx: Math.cos(ang) * sp,
+            vy: Math.sin(ang) * sp,
+            life: 1,
+            decay: rand(0.008, 0.018),
+            size: rand(1.2, 2.9),
+            color: p[(Math.random() * p.length) | 0],
+            twinkle: Math.random() < 0.35,
+            spark: Math.random() < 0.18
+          });
+        }
       }
-      // 核心亮团
+
+      // 核心亮团（保留）
       for (let i = 0; i < 22; i++) {
         const ang = Math.random() * Math.PI * 2;
         const sp = rand(0.2, 1.4);
