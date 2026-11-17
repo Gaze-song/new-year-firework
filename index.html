@@ -78,19 +78,19 @@
   }
   @keyframes fadeIn { to { opacity: .92; } }
 
-  /* 彩带 */
-  .ribbon {
+    /* 爱心 */
+  .heart {
     position: absolute;
-    width: 8px; height: 16px;
-    border-radius: 2px;
     top: -30px;
     opacity: .9;
     animation: fall linear infinite;
+    user-select: none;
+    text-shadow: 0 0 8px currentColor; /* 加一点发光效果 */
   }
   @keyframes fall {
     0% { transform: translateY(-40px) rotate(0deg); opacity: 0; }
     10% { opacity: 1; }
-    100% { transform: translateY(105vh) rotate(720deg); opacity: .1; }
+    100% { transform: translateY(105vh) rotate(360deg); opacity: .1; } /* 爱心旋转360度 */
   }
 
   .hint {
@@ -152,14 +152,15 @@
 
   /* ---------- 彩带 ---------- */
   const colors = ['#ffd166', '#ff7eb3', '#a78bfa', '#6ee7ff', '#ffe9a3', '#ff5e7e', '#7dffb3'];
-  for (let i = 0; i < 34; i++) {
+    for (let i = 0; i < 40; i++) { // 增加了数量，40颗爱心
     const r = document.createElement('div');
-    r.className = 'ribbon';
+    r.className = 'heart'; // 使用新的爱心类名
+    r.innerHTML = '❤'; // 直接使用爱心符号
     r.style.left = Math.random() * 100 + '%';
-    r.style.background = colors[(Math.random() * colors.length) | 0];
+    r.style.color = colors[(Math.random() * colors.length) | 0]; // 用 color 控制爱心颜色
     r.style.animationDuration = (6 + Math.random() * 7).toFixed(2) + 's';
     r.style.animationDelay = (Math.random() * 10).toFixed(2) + 's';
-    r.style.height = (10 + Math.random() * 16) + 'px';
+    r.style.fontSize = (14 + Math.random() * 18) + 'px'; // 随机爱心大小
     r.style.opacity = 0.5 + Math.random() * 0.5;
     document.body.appendChild(r);
   }
